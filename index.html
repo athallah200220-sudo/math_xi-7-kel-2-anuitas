@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kalkulator Anuitas Gaya Komik</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts untuk kesan komik/kartun -->
+    <link href="https://fonts.googleapis.com/css2?family=Bangers&family=Comic+Neue:wght@700&family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        .font-comic {
+            font-family: 'Comic Neue', cursive, sans-serif;
+        }
+        .font-title {
+            font-family: 'Bangers', cursive, sans-serif;
+            letter-spacing: 1px;
+        }
+        /* Efek Border Tebal Khas Komik / Pop Art */
+        .comic-box {
+            border: 4px solid #1e293b;
+            box-shadow: 6px 6px 0px #1e293b;
+            transition: all 0.1s ease;
+        }
+        .comic-btn {
+            border: 3px solid #1e293b;
+            box-shadow: 4px 4px 0px #1e293b;
+            transition: all 0.05s ease;
+        }
+        .comic-btn:active {
+            transform: translate(2px, 2px);
+            box-shadow: 2px 2px 0px #1e293b;
+        }
+        .comic-input {
+            border: 3px solid #1e293b;
+            box-shadow: 3px 3px 0px #1e293b;
+        }
+    </style>
+</head>
+<body class="bg-amber-50 text-slate-900 font-sans min-h-screen py-10 px-4">
+
+    <div class="max-w-4xl mx-auto">
+        <!-- Header Bergaya Komik -->
+        <header class="text-center mb-8">
+            <div class="inline-block bg-yellow-300 comic-box px-6 py-3 rounded-2xl transform -rotate-1 mb-3">
+                <h1 class="text-4xl md:text-5xl font-title text-indigo-700 drop-shadow-[2px_2px_0px_#1e293b]">
+                    POW! KALKULATOR ANUITAS! 💥
+                </h1>
+            </div>
+            <p class="font-comic text-lg text-slate-700 font-bold">Hitung pinjaman dengan suku bunga bulanan & tabel otomatis gaya komik!</p>
+        </header>
+
+        <!-- Main Card -->
+        <div class="bg-white comic-box rounded-3xl p-6 md:p-8 grid grid-cols-1 md:grid-cols-3 gap-8 mb-8">
+            
+            <!-- Form Input -->
+            <div class="md:col-span-1 space-y-4">
+                <h2 class="text-2xl font-title text-indigo-600 border-b-2 border-slate-900 pb-1">⚙️ DATA KREDIT</h2>
+                
+                <div>
+                    <label class="block text-sm font-comic font-bold text-slate-700 mb-1">Jumlah Pinjaman / Plafond (Rp)</label>
+                    <input type="number" id="plafond" value="100000000" class="w-full px-3 py-2 comic-input rounded-xl bg-yellow-50 focus:outline-none focus:bg-white font-bold">
+                </div>
+
+                <div>
+                    <label class="block text-sm font-comic font-bold text-slate-700 mb-1">Suku Bunga per Bulan (%)</label>
+                    <input type="number" id="bungaBulan" value="1" step="0.01" class="w-full px-3 py-2 comic-input rounded-xl bg-yellow-50 focus:outline-none focus:bg-white font-bold">
+                    <span class="text-xs text-slate-500 italic mt-1 block">*Langsung menggunakan suku bunga bulanan</span>
+                </div>
+
+                <div>
+                    <label class="block text-sm font-comic font-bold text-slate-700 mb-1">Tenor / Jangka Waktu (Bulan)</label>
+                    <input type="number" id="tenor" value="12" class="w-full px-3 py-2 comic-input rounded-xl bg-yellow-50 focus:outline-none focus:bg-white font-bold">
+                </div>
+
+                <button onclick="hitungAnuitas()" class="w-full bg-rose-500 hover:bg-rose-600 text-white font-title text-xl tracking-wider py-3 rounded-xl comic-btn cursor-pointer">
+                    ZAP! HITUNG SEKARANG ⚡
+                </button>
+            </div>
+
+            <!-- Hasil & Ringkasan -->
+            <div class="md:col-span-2 flex flex-col justify-between space-y-6">
+                <div>
+                    <h2 class="text-2xl font-title text-indigo-600 border-b-2 border-slate-900 pb-1 mb-4">📊 RINGKASAN AKSI</h2>
+                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                        <div class="bg-cyan-200 comic-box p-4 rounded-2xl">
+                            <span class="block text-xs font-comic font-black uppercase text-slate-800">Angsuran / Bulan (Anuitas)</span>
+                            <span id="resAngsuran" class="text-lg font-black text-indigo-900">Rp 0</span>
+                        </div>
+                        <div class="bg-emerald-200 comic-box p-4 rounded-2xl">
+                            <span class="block text-xs font-comic font-black uppercase text-slate-800">Total Bunga</span>
+                            <span id="resTotalBunga" class="text-lg font-black text-emerald-900">Rp 0</span>
+                        </div>
+                        <div class="bg-orange-200 comic-box p-4 rounded-2xl">
+                            <span class="block text-xs font-comic font-black uppercase text-slate-800">Total Pembayaran</span>
+                            <span id="resTotalBayar" class="text-lg font-black text-amber-900">Rp 0</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Aksi Tabel -->
+                <div class="flex flex-wrap justify-between items-center gap-2 pt-2">
+                    <h3 class="font-title text-xl text-slate-800">📋 TABEL AMORTISASI</h3>
+                    <div class="space-x-2">
+                        <button onclick="salinTabel()" class="bg-yellow-300 hover:bg-yellow-400 text-slate-900 px-3 py-1.5 rounded-xl text-sm font-comic font-bold comic-btn cursor-pointer">
+                            <i class="fa-regular fa-copy mr-1"></i> Salin Data
+                        </button>
+                        <button onclick="window.print()" class="bg-indigo-500 hover:bg-indigo-600 text-white px-3 py-1.5 rounded-xl text-sm font-comic font-bold comic-btn cursor-pointer">
+                            <i class="fa-solid fa-print mr-1"></i> Cetak
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tabel Amortisasi -->
+        <div class="bg-white comic-box rounded-3xl p-6 mb-10 overflow-hidden">
+            <div class="overflow-x-auto max-h-[420px]">
+                <table id="tabelAmortisasi" class="w-full border-collapse text-left text-sm text-slate-800">
+                    <thead class="bg-yellow-300 text-slate-900 font-title text-base sticky top-0 border-b-3 border-slate-900">
+                        <tr>
+                            <th class="p-3 border-r-2 border-slate-900">Bulan</th>
+                            <th class="p-3 border-r-2 border-slate-900">Angsuran Pokok</th>
+                            <th class="p-3 border-r-2 border-slate-900">Bunga</th>
+                            <th class="p-3 border-r-2 border-slate-900">Anuitas (Total)</th>
+                            <th class="p-3">Sisa Hutang</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y-2 divide-slate-200 font-medium">
+                        <!-- Data otomatis lewat JavaScript -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Bagian Nama-Nama Pembuat (Berjejer Ke Bawah) -->
+        <footer class="bg-indigo-100 comic-box rounded-3xl p-6 text-center">
+            <h3 class="text-2xl font-title text-indigo-700 mb-3">✨ DISUSUN OLEH KELOMPOK ✨</h3>
+            <div class="flex flex-col space-y-2 font-comic font-bold text-lg text-slate-800 max-w-md mx-auto bg-white comic-box p-4 rounded-2xl">
+                <div>Athallah Sani Rianda (5)</div>
+                <div>Ghazani Raissa Fitri (12)</div>
+                <div>Mochammad Thoriq Badruzaman (22)</div>
+                <div>Muhammad Farsa Kurnia Al Faqih (23)</div>
+                <div>Natalie Putri Dianty (25)</div>
+                <div>Nitisari Sukma Mulyanagara (26)</div>
+                <div>Saffira Bianca Purwana (34)</div>
+            </div>
+        </footer>
+    </div>
+
+    <!-- Script Kalkulator Anuitas dengan Suku Bunga Bulanan -->
+    <script>
+        let dataTabelGlobal = [];
+
+        function formatRupiah(angka) {
+            return new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', maximumFractionDigits: 0 }).format(angka);
+        }
+
+        function hitungAnuitas() {
+            let plafond = parseFloat(document.getElementById('plafond').value) || 0;
+            let bungaPerBulan = (parseFloat(document.getElementById('bungaBulan').value) || 0) / 100;
+            let tenor = parseInt(document.getElementById('tenor').value) || 0;
+
+            if (plafond <= 0 || tenor <= 0) {
+                alert("Masukkan jumlah pinjaman dan tenor dengan benar!");
+                return;
+            }
+
+            let angsuran = 0;
+            if (bungaPerBulan === 0) {
+                angsuran = plafond / tenor;
+            } else {
+                angsuran = plafond * (bungaPerBulan * Math.pow(1 + bungaPerBulan, tenor)) / (Math.pow(1 + bungaPerBulan, tenor) - 1);
+            }
+
+            let sisaPokok = plafond;
+            let totalBunga = 0;
+            let tbody = document.querySelector("#tabelAmortisasi tbody");
+            tbody.innerHTML = "";
+            dataTabelGlobal = [];
+
+            for (let b = 1; b <= tenor; b++) {
+                let porsiBunga = sisaPokok * bungaPerBulan;
+                let porsiPokok = angsuran - porsiBunga;
+                sisaPokok -= porsiPokok;
+                if (sisaPokok < 0 || b === tenor) sisaPokok = 0;
+
+                totalBunga += porsiBunga;
+
+                dataTabelGlobal.push({
+                    bulan: b,
+                    pokok: Math.round(porsiPokok),
+                    bunga: Math.round(porsiBunga),
+                    anuitas: Math.round(angsuran),
+                    sisa: Math.round(sisaPokok)
+                });
+
+                let row = `<tr class="hover:bg-yellow-50">
+                    <td class="p-3 font-bold border-r-2 border-slate-200">${b}</td>
+                    <td class="p-3 text-indigo-600 font-bold border-r-2 border-slate-200">${formatRupiah(porsiPokok)}</td>
+                    <td class="p-3 text-rose-600 font-bold border-r-2 border-slate-200">${formatRupiah(porsiBunga)}</td>
+                    <td class="p-3 text-emerald-700 font-bold border-r-2 border-slate-200">${formatRupiah(angsuran)}</td>
+                    <td class="p-3 font-bold">${formatRupiah(sisaPokok)}</td>
+                </tr>`;
+                tbody.innerHTML += row;
+            }
+
+            let totalBayar = plafond + totalBunga;
+
+            document.getElementById('resAngsuran').innerText = formatRupiah(angsuran);
+            document.getElementById('resTotalBunga').innerText = formatRupiah(totalBunga);
+            document.getElementById('resTotalBayar').innerText = formatRupiah(totalBayar);
+        }
+
+        function salinTabel() {
+            if (dataTabelGlobal.length === 0) {
+                alert("Belum ada data untuk disalin.");
+                return;
+            }
+            let text = "Bulan\tAngsuran Pokok\tBunga\tAnuitas (Total)\tSisa Hutang\n";
+            dataTabelGlobal.forEach(row => {
+                text += `${row.bulan}\t${row.pokok}\t${row.bunga}\t${row.anuitas}\t${row.sisa}\n`;
+            });
+            navigator.clipboard.writeText(text).then(() => {
+                alert("Data berhasil disalin! Anda bisa langsung tempel (paste) ke Microsoft Excel / Google Sheets.");
+            });
+        }
+
+        // Jalankan perhitungan awal saat halaman dimuat
+        window.onload = hitungAnuitas;
+    </script>
+</body>
+</html>
